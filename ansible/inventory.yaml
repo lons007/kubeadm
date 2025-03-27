@@ -15,8 +15,9 @@ all:
         worker2.kuber.local:
         worker3.kuber.local:
     kuber:
-      masters:
-      controls:
-      workers:
+      children:
+       masters:
+       controls:
+       workers:
 
 
