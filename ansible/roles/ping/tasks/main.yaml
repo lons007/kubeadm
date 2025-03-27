@@ -1,0 +1,8 @@
+- name: Проверить подключение и сохранить результат
+  ansible.builtin.ping:
+  register: ping_result
+  ignore_errors: yes
+
+- name: Показать результат ping
+  ansible.builtin.debug:
+    var: ping_result
