@@ -3,11 +3,9 @@ all:
   children:
     ansible:
       hosts:
-        ansible:
          ansible.kuber.local:
     master:
       hosts:
-        master:
           master.kuber.local:
 
 
