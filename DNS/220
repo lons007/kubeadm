@@ -1,0 +1,19 @@
+@ IN SOA master.kuber.local. (
+                                            2022120100 ;Serial
+                                            3600 ;Refresh
+                                            1800 ;Retry
+                                            604800 ;Expire
+                                            86400 ;Minimum TTL
+)
+
+@       IN      NS      master.kuber.local.
+131     IN      PTR     master.kuber.local.
+132     IN      PTR     control1.kuber.local.
+133     IN      PTR     control2.kuber.local.
+134     IN      PTR     control3.kuber.local.
+136     IN      PTR     worker1.kuber.local.
+135     IN      PTR     worker2.kuber.local.
+137     IN      PTR     worker3.kuber.local.
+
+180     IN      PTR     metallb.kuber.local.
+189     IN      PTR     kubeapi.kuber.local.

@@ -1,0 +1,23 @@
+$TTL 86400
+@ IN SOA master.kuber.local. (
+                                                2022120100 ;Serial
+                                                3600 ;Refresh
+                                                1800 ;Retry
+                                                604800 ;Expire
+                                                86400 ;Minimum TTL
+)
+
+@               IN      NS      master.kuber.local.
+master          IN      A       192.168.220.131
+control1        IN      A       192.168.220.132
+control2        IN      A       192.168.220.133
+control3        IN      A       192.168.220.134
+worker1         IN      A       192.168.220.136
+worker2         IN      A       192.168.220.135
+worker3         IN      A       192.168.220.137
+
+metallb         IN      A       192.168.220.180
+argocd          IN      CNAME   metallb
+keycloak        IN      CNAME   metallb
+
+kubeapi         IN      A       192.168.220.189
