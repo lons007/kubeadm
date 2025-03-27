@@ -3,5 +3,5 @@ all:
   children:
     ansible:
       hosts:
-        ansible.kuber.local
+        ansible.kuber.local:
 
