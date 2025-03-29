@@ -9,7 +9,7 @@ all:
        master.kuber.local:
     controls:
       hosts:
-        control1.kuber.local:
+#        control1.kuber.local:
         control2.kuber.local:
         control3.kuber.local:
     workers:
