@@ -20,7 +20,7 @@
     src: keepalived.j2
     dest: /etc/keepalived/keepalived.conf
     mode: '0600'
-  notify: restart keepalived
+  notify: Restart keepalived
 
 - name: Copy haproxy haproxy.cfg
   ansible.builtin.template:
@@ -28,7 +28,7 @@
     dest: /etc/haproxy/haproxy.cfg
     mode: '0600'
   register: haproxy_conf
-  notify: restart haproxy
+  notify: Restart haproxy
 
 - name: Enable keepalived and haproxy
   ansible.builtin.service:
