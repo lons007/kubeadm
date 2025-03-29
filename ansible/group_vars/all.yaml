@@ -89,8 +89,8 @@ nodelocaldns_local_ip: 169.254.25.10
 
 ## HA cluser
 # If you need disable HA, undefine ha_cluster_virtual_ip
-# ha_cluster_virtual_ip: 192.168.220.189
-# ha_cluster_virtual_port: 7443
+ha_cluster_virtual_ip: 192.168.220.180
+ha_cluster_virtual_port: 7443
 
 ############################################################
 ####  UTILS                                  ###############
