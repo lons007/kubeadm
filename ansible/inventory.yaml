@@ -1,6 +1,9 @@
 ---
 all:
   children:
+    k8s_masters:
+      hosts:
+        control1.kuber.local:
     masters:
       hosts:
        master.kuber.local:
