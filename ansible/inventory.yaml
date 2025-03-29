@@ -4,6 +4,8 @@ all:
     k8s_masters:
       hosts:
         control1.kuber.local:
+        control2.kuber.local:
+        control3.kuber.local:
     masters:
       hosts:
        master.kuber.local:
