@@ -1,0 +1,5 @@
+---
+- name: Apply kernel upgrade to workers and controls
+  hosts: workers
+  roles:
+    - role: add-cgroup-v2
