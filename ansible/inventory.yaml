@@ -14,15 +14,15 @@ all:
         control1.kuber.local:
         control2.kuber.local:
         control3.kuber.local:
-        control4.kuber.local:
+#        control4.kuber.local:
     workers:
       hosts:
         worker1.kuber.local:
         worker2.kuber.local:
         worker3.kuber.local:
-    test:
-      hosts:
-        control4.kuber.local:
+#    test:
+#      hosts:
+#        control4.kuber.local:
     kuber:
       children:
        masters:
