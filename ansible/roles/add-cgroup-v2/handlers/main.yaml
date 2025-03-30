@@ -1,0 +1,9 @@
+- name: update grub and reboot
+  ansible.builtin.command: grub2-mkconfig -o /boot/grub2/grub.cfg
+  notify: reboot system
+
+- name: reboot system
+  ansible.builtin.reboot:
+    msg: "Reboot for cgroups v2 migration"
+    connect_timeout: 5
+    reboot_timeout: 300

@@ -1,0 +1,12 @@
+- name: Add cgroup arguments via grubby
+  ansible.builtin.command: "grubby --update-kernel=ALL --args='cgroup_enable=cpuset systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all'"
+  register: grubby_update
+  changed_when: "'No update needed' not in grubby_update.stdout"
+  notify: update grub and reboot
+
+- name: Clean kubelet configuration
+  ansible.builtin.file:
+    path: /var/lib/kubelet/config.yaml
+    state: absent
+  when: ansible_kernel is version('5.0', '>=')
+  ignore_errors: yes
