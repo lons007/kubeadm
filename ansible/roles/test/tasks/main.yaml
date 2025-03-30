@@ -11,6 +11,11 @@
   ansible.builtin.set_fact:
     masters_ip: "{{ hostvars[groups['masters'][0]].ansible_default_ipv4.address }}"
 
+- name: Debug masters_ip
+  ansible.builtin.debug:
+    var: masters_ip
+  when: masters_ip is defined
+
 - name: Replace nameserver entries
   ansible.builtin.replace:
     path: "/etc/resolv.conf"
