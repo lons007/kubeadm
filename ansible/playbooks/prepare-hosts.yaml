@@ -1,8 +1,9 @@
-- hosts: all
+- name: prepare
+  hosts: all
   roles:
     - prepare
 
-- name: Получить версию ядра
+- name: Get check kernel version
   hosts: workers:controls
   shell: uname -r | cut -d. -f1
   register: kernel_major_version
