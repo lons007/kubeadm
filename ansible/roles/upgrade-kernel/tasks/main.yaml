@@ -1,0 +1,55 @@
+---
+- name: Verify host is in 'workers' or 'controls' group
+  ansible.builtin.assert:
+    that:
+      - inventory_hostname in groups['workers'] or inventory_hostname in groups['controls'] or inventory_hostname in groups['test']
+    fail_msg: "Host {{ inventory_hostname }} is not in 'workers' or 'controls' groups"
+
+- name: Install ELRepo GPG key
+  ansible.builtin.rpm_key:
+    state: present
+    key: "https://www.elrepo.org/RPM-GPG-KEY-elrepo.org"
+
+- name: Install ELRepo repository
+  ansible.builtin.dnf:
+    name: "https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm"
+    disable_gpg_check: yes  # Временное отключение проверки для установки
+    state: present
+  notify: Update DNF cache
+
+- name: Install kernel-ml
+  ansible.builtin.dnf:
+    name: "kernel-ml"
+    enablerepo: elrepo-kernel
+    state: latest
+  register: kernel_install
+  notify: Update GRUB
+
+- name: Verify ELRepo is enabled
+  ansible.builtin.command: dnf repolist enabled | grep elrepo
+  register: elrepo_check
+  failed_when: elrepo_check.rc != 0 and elrepo_check.rc != 1
+
+- name: Add cgroup arguments via grubby
+  ansible.builtin.command: "grubby --update-kernel=ALL --args='cgroup_enable=cpuset systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all'"
+  register: grubby_update
+  changed_when: "'No update needed' not in grubby_update.stdout"
+  notify: Update GRUB
+
+#- name: Ensure cgroup params in GRUB_CMDLINE_LINUX
+#  ansible.builtin.lineinfile:
+#    path: "/etc/default/grub"
+#    regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
+#    line: 'GRUB_CMDLINE_LINUX="\1 systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all"'
+#    backrefs: yes
+#  register: grub_modified
+#  notify: Update GRUB
+
+- name: Check if reboot is needed
+  ansible.builtin.set_fact:
+    reboot_required: "{{ kernel_install.changed or grubby_update.changed or grub_modified.changed }}"
+
+- name: Reboot if changes were made
+  ansible.builtin.reboot:
+    reboot_timeout: 600
+  when: reboot_required

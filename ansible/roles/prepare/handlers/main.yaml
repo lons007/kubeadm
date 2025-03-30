@@ -1,0 +1,6 @@
+---
+- name: Update GRUB
+  ansible.builtin.command: grub2-mkconfig -o /boot/grub2/grub.cfg
+
+- name: Update DNF cache
+  ansible.builtin.command: dnf makecache
