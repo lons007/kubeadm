@@ -20,5 +20,7 @@ chmod 640 /var/named/200
 firewall-cmd --permanent --add-service=dns
 firewall-cmd --reload
 
-# на клиентах в /etc/resolve.conf добавляем ip dns сервера
+# на клиентах в /etc/resolv.conf добавляем ip dns сервера
 nameserver 192.168.220.131
+# и выполняем
+chattr +i /etc/resolv.conf

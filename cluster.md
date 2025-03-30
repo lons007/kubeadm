@@ -28,6 +28,7 @@ ssh-copy-id root@ansible.kuber.local
 ssh-copy-id root@control1.kuber.local
 ssh-copy-id root@control2.kuber.local
 ssh-copy-id root@control3.kuber.local
+ssh-copy-id root@control4.kuber.local
 
 ssh-copy-id root@worker1.kuber.local
 ssh-copy-id root@worker2.kuber.local
@@ -37,5 +38,15 @@ ssh-copy-id root@worker3.kuber.local
 sudo dnf install -y https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
 sudo dnf --enablerepo=elrepo-kernel install kernel-ml -y
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+grubby --update-kernel=ALL --args="cgroup_enable=cpuset"
+vim /etc/default/grub
+# добавить systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all в файл /etc/default/grub:
+GRUB_CMDLINE_LINUX="... systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all ..."
+
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 sudo reboot
+
+#Проверить что cgroup v2 cgroup2fs
+stat -fc %T /sys/fs/cgroup/ 
+
 uname -r
