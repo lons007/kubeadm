@@ -1,3 +1,17 @@
-- hosts: test,masters
+---
+- name: Apply kernel upgrade to workers and controls
+#  hosts: workers:controls  # Только эти группы!
+  hosts: test  # Только эти группы!
   roles:
-    - test
+    - role: kernel_upgrade
+      tags: kernel_upgrade
+
+- name: Post-reboot verification
+#  hosts: workers:controls
+  hosts: test
+  tasks:
+    - name: Include post-reboot checks
+      ansible.builtin.include_role:
+        name: kernel_upgrade
+        tasks_from: post_reboot.yml
+  tags: post_reboot

@@ -1,22 +1,43 @@
-- name: Check if resolv.conf has immutable attribute
-  ansible.builtin.command: lsattr "/etc/resolv.conf"
-  register: lsattr_result
-  changed_when: false  # Не влияет на состояние системы
-  ignore_errors: yes   # Игнорировать ошибки, если файла нет
+---
+- name: Verify host is in 'workers' or 'controls' group
+  ansible.builtin.assert:
+    that:
+      - inventory_hostname in groups['workers'] or inventory_hostname in groups['controls'] or inventory_hostname in groups['test']
+    fail_msg: "Host {{ inventory_hostname }} is not in 'workers' or 'controls' groups"
 
-- name: Remove immutable attribute (if set)
-  ansible.builtin.command: chattr -i "/etc/resolv.conf"
+- name: Install ELRepo repository
+  ansible.builtin.dnf:
+    name: "https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm"
+    state: present
 
-- name: Get the first master node's IP
+- name: Install kernel-ml
+  ansible.builtin.dnf:
+    name: "kernel-ml"
+    enablerepo: elrepo-kernel
+    state: latest
+  register: kernel_install
+  notify: Update GRUB
+
+- name: Add cgroup arguments via grubby
+  ansible.builtin.command: "grubby --update-kernel=ALL --args='systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all'"
+  register: grubby_update
+  changed_when: "'No update needed' not in grubby_update.stdout"
+  notify: Update GRUB
+
+- name: Ensure cgroup params in GRUB_CMDLINE_LINUX
+  ansible.builtin.lineinfile:
+    path: "/etc/default/grub"
+    regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
+    line: 'GRUB_CMDLINE_LINUX="\1 systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all"'
+    backrefs: yes
+  register: grub_modified
+  notify: Update GRUB
+
+- name: Check if reboot is needed
   ansible.builtin.set_fact:
-    masters_ip: "{{ hostvars[groups['masters'][0]].ansible_default_ipv4.address }}"
+    reboot_required: "{{ kernel_install.changed or grubby_update.changed or grub_modified.changed }}"
 
-- name: Replace nameserver entries
-  ansible.builtin.replace:
-    path: "/etc/resolv.conf"
-    regexp: '^nameserver\s+\S+'
-    replace: 'nameserver {{ masters_ip }}'
-    backup: yes
-
-- name: Restore immutable attribute
-  ansible.builtin.command: chattr +i "/etc/resolv.conf"
+- name: Reboot if changes were made
+  ansible.builtin.reboot:
+    reboot_timeout: 600
+  when: reboot_required

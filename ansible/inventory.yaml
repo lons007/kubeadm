@@ -22,7 +22,7 @@ all:
         worker3.kuber.local:
     test:
       hosts:
-        control1.kuber.local:
+        control4.kuber.local:
     kuber:
       children:
        masters:
