@@ -1,0 +1,22 @@
+- name: Check if resolv.conf has immutable attribute
+  ansible.builtin.command: lsattr "/etc/resolv.conf"
+  register: lsattr_result
+  changed_when: false  # Не влияет на состояние системы
+  ignore_errors: yes   # Игнорировать ошибки, если файла нет
+
+- name: Remove immutable attribute (if set)
+  ansible.builtin.command: chattr -i "/etc/resolv.conf"
+
+- name: Get the first master node's IP
+  ansible.builtin.set_fact:
+    masters_ip: "{{ hostvars[groups['masters'][0]].ansible_default_ipv4.address }}"
+
+- name: Replace nameserver entries
+  ansible.builtin.replace:
+    path: "/etc/resolv.conf"
+    regexp: '^nameserver\s+\S+'
+    replace: 'nameserver {{ masters_ip }}'
+    backup: yes
+
+- name: Restore immutable attribute
+  ansible.builtin.command: chattr +i "/etc/resolv.conf"
