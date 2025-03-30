@@ -10,9 +10,6 @@
 - name: Get the first master node's IP
   ansible.builtin.set_fact:
     masters_ip: "{{ hostvars[groups['masters'][0]].ansible_default_ipv4.address }}"
-  when:
-    - groups['masters'] is defined
-    - groups['masters'] | length > 0
 
 - name: Replace nameserver entries
   ansible.builtin.replace:
@@ -20,7 +17,6 @@
     regexp: '^nameserver\s+\S+'
     replace: 'nameserver {{ masters_ip }}'
     backup: yes
-  when: masters_ip is defined
 
 - name: Restore immutable attribute
   ansible.builtin.command: chattr +i "/etc/resolv.conf"
