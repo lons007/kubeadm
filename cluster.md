@@ -32,3 +32,10 @@ ssh-copy-id root@control3.kuber.local
 ssh-copy-id root@worker1.kuber.local
 ssh-copy-id root@worker2.kuber.local
 ssh-copy-id root@worker3.kuber.local
+
+# Для kubernates 1.32.2 необходимо обновить ядро для RockyLinux на 5.x +
+sudo dnf install -y https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
+sudo dnf --enablerepo=elrepo-kernel install kernel-ml -y
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+sudo reboot
+uname -r

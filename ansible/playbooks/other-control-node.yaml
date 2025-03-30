@@ -1,0 +1,3 @@
+- hosts: k8s_masters
+  roles:
+    - other-control-node
