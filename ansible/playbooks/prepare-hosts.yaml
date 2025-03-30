@@ -1,31 +1,29 @@
-- name: prepare
-  hosts: all
+---
+- hosts: all
   roles:
     - prepare
 
-- name: Get check kernel version
+- name: Kernel version check and upgrade
   hosts: workers:controls
-  shell: uname -r | cut -d. -f1
-  register: kernel_major_version
-  changed_when: false
-
-- name: Вывести предупреждение если ядро < 5
-  debug:
-    msg: "ВНИМАНИЕ: Версия ядра {{ ansible_kernel }} меньше 5. Рекомендуется обновить ядро."
-  when: kernel_major_version.stdout|int < 5
-
-- name: Apply kernel upgrade to workers and controls
-  hosts: workers:controls
-  roles:
-    - role: test
-      tags: kernel_upgrade
-  when: kernel_major_version.stdout|int < 5
-
-- name: Post-reboot verification
-  hosts: workers:controls
+  gather_facts: true
   tasks:
-    - name: Include post-reboot checks
+    - name: Get major kernel version
+      ansible.builtin.set_fact:
+        kernel_major: "{{ ansible_kernel.split('.')[0]|int }}"
+
+    - name: Apply kernel upgrade if needed
       ansible.builtin.include_role:
-        name: test
+        name: upgrade-kernel
+      when: kernel_major < 5
+      tags: kernel_upgrade
+
+- name: Post-reboot checks
+  hosts: workers:controls
+  gather_facts: true
+  tasks:
+    - name: Verify new kernel version
+      ansible.builtin.include_role:
+        name: upgrade-kernel
         tasks_from: post_reboot.yml
-  tags: post_reboot
+      when: ansible_kernel is version('5.0', '<')  # На случай если обновление не сработало
+      tags: post_reboot
