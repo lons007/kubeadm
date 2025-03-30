@@ -1,21 +1,4 @@
 ---
-- name: Reset Kubernetes (if needed)
-  command: kubeadm reset -f
-  when: inventory_hostname in groups['workers'] or inventory_hostname in groups['controls']
-  register: reset_result
-  changed_when: "'reset' in reset_result.stdout"
-  ignore_errors: yes
-
-- name: Clean residual files
-  file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - /etc/kubernetes/
-    - /var/lib/kubelet/
-    - /var/lib/etcd/
-  ignore_errors: yes
-
 - name: Generate join token
   ansible.builtin.command: kubeadm token create
   register: join_token
