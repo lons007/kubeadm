@@ -1,0 +1,25 @@
+- name: Remove immutable attribute from /etc/resolv.conf (if set)
+  ansible.builtin.file:
+    path: /etc/resolv.conf
+    attribute: "i-"
+  changed_when: false
+
+- name: Get the first master node's IP
+  set_fact:
+    masters_ip: "{{ hostvars[groups['masters'][0]].ansible_default_ipv4.address }}"
+  when:
+    - groups['masters'] is defined
+    - groups['masters'] | length > 0
+
+- name: Replace nameserver entries with master's IP
+  ansible.builtin.replace:
+    path: /etc/resolv.conf
+    regexp: '^nameserver\s+\S+'
+    replace: 'nameserver {{ masters_ip }}'
+    backup: yes
+  when: masters_ip is defined
+
+- name: Restore immutable attribute on /etc/resolv.conf
+  ansible.builtin.file:
+    path: /etc/resolv.conf
+    attribute: "i+"

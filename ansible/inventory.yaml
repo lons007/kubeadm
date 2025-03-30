@@ -20,6 +20,9 @@ all:
         worker1.kuber.local:
         worker2.kuber.local:
         worker3.kuber.local:
+    test:
+      hosts:
+        control2.kuber.local:
     kuber:
       children:
        masters:
