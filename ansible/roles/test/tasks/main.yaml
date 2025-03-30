@@ -6,9 +6,6 @@
 
 - name: Remove immutable attribute (if set)
   ansible.builtin.command: chattr -i "/etc/resolv.conf"
-  when:
-    - lsattr_result is success
-    - "'i' in lsattr_result.stdout"
 
 - name: Get the first master node's IP
   ansible.builtin.set_fact:
@@ -27,6 +24,3 @@
 
 - name: Restore immutable attribute
   ansible.builtin.command: chattr +i "/etc/resolv.conf"
-  when:
-    - lsattr_result is success
-    - "'i' in lsattr_result.stdout"
