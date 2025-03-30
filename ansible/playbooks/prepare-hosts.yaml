@@ -5,51 +5,27 @@
 
 - name: Apply kernel upgrade to workers and controls
   hosts: workers:controls
-  gather_facts: true
+  gather_facts: true  # Включаем сбор фактов для получения версии ядра
+
   tasks:
     - name: Set kernel major version fact
       ansible.builtin.set_fact:
-        kernel_major: "{{ ansible_kernel.split('.')[0] | int }}"
+        kernel_major: "{{ ansible_kernel.split('.')[0] | int }}"  # Явное преобразование в integer
 
     - name: Apply kernel upgrade (only if kernel < 5)
       ansible.builtin.include_role:
         name: upgrade-kernel
-      when: kernel_major | int < 5
+      when: kernel_major | int < 5  # Явное преобразование перед сравнением
       tags: kernel_upgrade
-
-- name: Configure cgroups after kernel upgrade
-  hosts: workers:controls
-  gather_facts: true
-  tasks:
-    - name: Check cgroup version
-      ansible.builtin.command: stat -fc %T /sys/fs/cgroup/
-      register: cgroup_version
-      changed_when: false
-
-    - name: Add cgroups v2 configuration (if using v1)
-      ansible.builtin.include_role:
-        name: add-cgroup-v2
-      when: "'tmpfs' in cgroup_version.stdout"
-      tags: cgroup_config
 
 - name: Post-reboot verification
   hosts: workers:controls
   gather_facts: true
+
   tasks:
     - name: Include post-reboot checks
       ansible.builtin.include_role:
         name: upgrade-kernel
         tasks_from: post_reboot.yml
-      when: ansible_kernel is version('5.0', '<')
-      tags: post_reboot
-
-    - name: Verify cgroups configuration
-      ansible.builtin.command: stat -fc %T /sys/fs/cgroup/
-      register: final_cgroup_version
-      changed_when: false
-      tags: post_reboot
-
-    - name: Show final cgroup status
-      ansible.builtin.debug:
-        msg: "Final cgroups version: {{ final_cgroup_version.stdout }}"
+      when: ansible_kernel is version('5.0', '<')  # Альтернативный способ проверки
       tags: post_reboot
