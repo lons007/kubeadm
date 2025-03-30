@@ -1,28 +1,29 @@
 ---
 all:
   children:
-    k8s_masters:
-      hosts:
-        control1.kuber.local:
-        control2.kuber.local:
-        control3.kuber.local:
-    masters:
-      hosts:
-       master.kuber.local:
+#    k8s_masters:
+#      hosts:
+#        control1.kuber.local:
+#        control2.kuber.local:
+#        control3.kuber.local:
+#    masters:
+#      hosts:
+#       master.kuber.local:
     controls:
       hosts:
-        control1.kuber.local:
-        control2.kuber.local:
-        control3.kuber.local:
-    workers:
-      hosts:
-        worker1.kuber.local:
-        worker2.kuber.local:
-        worker3.kuber.local:
-    kuber:
-      children:
-       masters:
-       controls:
-       workers:
+#        control1.kuber.local:
+#        control2.kuber.local:
+#        control3.kuber.local:
+        control4.kuber.local:
+#    workers:
+#      hosts:
+#        worker1.kuber.local:
+#        worker2.kuber.local:
+#        worker3.kuber.local:
+#    kuber:
+#      children:
+#       masters:
+#       controls:
+#       workers:
 
 
