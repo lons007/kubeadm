@@ -25,6 +25,11 @@
   register: kernel_install
   notify: Update GRUB
 
+- name: Verify ELRepo is enabled
+  ansible.builtin.command: dnf repolist enabled | grep elrepo
+  register: elrepo_check
+  failed_when: elrepo_check.rc != 0 and elrepo_check.rc != 1
+
 - name: Add cgroup arguments via grubby
   ansible.builtin.command: "grubby --update-kernel=ALL --args='systemd.unified_cgroup_hierarchy=1 cgroup_no_v1=all'"
   register: grubby_update
