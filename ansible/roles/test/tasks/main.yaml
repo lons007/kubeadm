@@ -17,11 +17,10 @@
   when: masters_ip is defined
 
 - name: Replace nameserver entries
-  ansible.builtin.replace:
-    path: "/etc/resolv.conf"
-    regexp: '^nameserver\s+\S+'
-    replace: 'nameserver {{ masters_ip }}'
-    backup: yes
+  ansible.builtin.command:
+    cmd: sed -i 's/^nameserver\s\+\S\+/nameserver {{ masters_ip }}/g' /etc/resolv.conf
+  args:
+    warn: false  # Игнорировать предупреждения
 
 - name: Restore immutable attribute
   ansible.builtin.command: chattr +i "/etc/resolv.conf"
