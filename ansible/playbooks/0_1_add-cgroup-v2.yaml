@@ -1,3 +1,4 @@
+#Опциональный playbook
 ---
 - name: Apply kernel upgrade to workers and controls
   hosts: workers
