@@ -11,14 +11,6 @@
 # ssh login
 ssh root@master.kuber.local
 ssh root@ansible.kuber.local
-ssh root@master.kuber.local
-ssh root@ansible.kuber.local
-ssh root@master.kuber.local
-ssh root@ansible.kuber.local
-ssh root@master.kuber.local
-ssh root@ansible.kuber.local
-ssh root@master.kuber.local
-ssh root@ansible.kuber.local
 
 ssh root@control1.kuber.local
 ssh root@control2.kuber.local
