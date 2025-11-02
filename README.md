@@ -11,6 +11,8 @@
 
 # copy ssh with ansible host
 ssh-keygen -t rsa 2048
+weqeqweqw
+qweqweqeqe
 ssh-copy-id root@master.kuber.local
 ssh-copy-id root@ansible.kuber.local
 
